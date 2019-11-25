@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "baseUrl": "../src",
+        "experimentalDecorators": true,
+        "lib": [
+            "es2015",
+            "es2015.promise"
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "sourceMap": true,
+        "target": "es5"
+    },
+    "exclude": [
+        "node_modules",
+        "tools"
+    ]
+}

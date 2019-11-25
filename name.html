@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <link href="templates/src/css/main.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+<div id="header">
+    <div class="content">
+        <div class="logo"><img src="templates/src/images/logo_az.png"/></div>
+        <div class="application-head">
+            <p class="common-content color-gray" th:text="${form.creationDate}"></p>
+            <h2>Hesabın rekvizitləri</h2>
+        </div>
+    </div>
+</div>
+<div id="main">
+    <div class="content common-content">
+        <div class="application-subhead">
+            <h2 class="color-green">Benefisiar məlumatları</h2>
+        </div>
+        <table>
+            <tr>
+                <td>Benefisiarın adı</td>
+                <td class="value common-content fw-m">Jamil</td>
+            </tr>
+            <tr>
+                <td>Benefisiarın VÖEN-i</td>
+                <td class="value common-content fw-m">AZ1213123</td>
+            </tr>
+            <tr>
+                <td>Hesab nömrəsi</td>
+                <td class="value common-content fw-m">AZN23123123312PB</td>
+            </tr>
+            <tr>
+                <td>Müxbir bank</td>
+                <td class="value common-content fw-m">PashaBank</td>
+            </tr>
+            <tr>
+                <td>SWIFT</td>
+                <td class="value common-content fw-m">SWIFTCODE</td>
+            </tr>
+            <tr>
+                <td>Bank kodu</td>
+                <td class="value common-content fw-m">PB21331</td>
+            </tr>
+            <tr>
+                <td>Valyuta</td>
+                <td class="value common-content fw-m">AZN</td>
+            </tr>
+            <tr>
+                <td>Bankın VÖEN-i</td>
+                <td class="value common-content fw-m">21323123</td>
+            </tr>
+            <tr>
+                <td>Ünvan</td>
+                <td class="value common-content fw-m">Nizami str 203b</td>
+            </tr>
+            <tr>
+                <td>Telefon</td>
+                <td class="value common-content fw-m">+9945151515151</td>
+            </tr>
+            <tr>
+                <td>Fax</td>
+                <td class="value common-content fw-m">+994515151515</td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td>Müxbir hesab</td>
+                <td class="value common-content fw-m">AZN231323123123</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+</body>
+
+</html>
