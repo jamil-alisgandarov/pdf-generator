@@ -1,8 +1,19 @@
 import * as puppeteer from 'puppeteer';
+import * as cuid from 'cuid';
 
 import { HTMLFile } from './HTMLFile';
 import { generateHtml } from '../templates';
 import { PDF_CONFIG } from '../application/consts';
+
+process.setMaxListeners(0);
+
+interface IPDFGeneratorOptions {
+    templatePath: string,
+    resourcesPath: string,
+    data: any,
+    pdfConfiguration?: puppeteer.PDFOptions,
+    fileNamePrefix?: string,
+}
 
 class PDFGenerator {
     private browser: puppeteer.Browser;
@@ -10,19 +21,17 @@ class PDFGenerator {
 
     constructor (pdfOptions?: puppeteer.PDFOptions) {
         this.pdfConfiguration = pdfOptions || PDF_CONFIG;
+        this.setupBrowser();
     }
 
-    private getBrowserIntance = async () => {
-        if (!this.browser) {
-            this.browser = await puppeteer.launch();
-        }
-        const page = await this.browser.newPage();
+    private setupBrowser = async () => {
+        this.browser = await puppeteer.launch({ headless: true });
 
-        return {
-            browser: this.browser,
-            page,
-        };
-    }
+        this.browser.on('disconnected', () => {
+            console.log('Browser disconnected trying to reconnect');
+            this.setupBrowser();
+        })
+    };
 
     private generateHtmlWithData = async (
         templatePath: string,
@@ -32,28 +41,47 @@ class PDFGenerator {
         return await generateHtml(templatePath, { ...data, resourcesPath });
     }
 
+    private getFileName = (fileNamePrefix?: string): string => {
+        let name = `${cuid()}.pdf`;
 
-    public createPdf = async (
-        templatePath: string,
-        resourcesPath: string,
-        data: any,
-        pdfConfiguration: puppeteer.PDFOptions = this.pdfConfiguration
-    ) => {
-        const { page } = await this.getBrowserIntance();
-        const html = await this.generateHtmlWithData(templatePath, resourcesPath, data);
+        if (fileNamePrefix) {
+            name = fileNamePrefix + '-' + name;
+        }
 
-        const fileInstance = new HTMLFile();
+        return name;
+    }
 
-        await fileInstance.generateHtmlAndSave(html);
-        await page.goto(fileInstance.getFilePath());
+    public createPdf = async ({
+        templatePath,
+        resourcesPath,
+        data,
+        pdfConfiguration = this.pdfConfiguration,
+        fileNamePrefix,
+    }: IPDFGeneratorOptions) => {
+        try {
+            const page = await this.browser.newPage();
+            console.log('Opened new page');
 
-        const pdf = await page.pdf(pdfConfiguration);
+            const html = await this.generateHtmlWithData(templatePath, resourcesPath, data);
+            const fileInstance = new HTMLFile();
+            await fileInstance.generateHtmlAndSave(html);
 
-        await fileInstance.deleteFile();
+            await page.goto(fileInstance.getFilePath(), { timeout: 0 });
 
-        page.close();
+            const pdf = await page.pdf(pdfConfiguration);
 
-        return pdf;
+            await fileInstance.deleteFile();
+
+            await page.close();
+            console.log('Closed page');
+
+            return {
+                pdf,
+                name: this.getFileName(fileNamePrefix),
+            };
+        } catch (e) {
+            console.log(e);
+        }
     }
 }
 
