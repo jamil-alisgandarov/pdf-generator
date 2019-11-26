@@ -5,14 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <base href="<%= resourcesPath %>">
+    <link rel="stylesheet" href="<%= resourcesPath %>/asan_form.css">
     <title>Document</title>
-    <link rel="stylesheet" href="./asan_form.css">
 </head>
 
 <body>
-    <table style="margin:90px auto; width: 750px;border-spacing: 0">
+    <table style="margin:90px auto; width: 750px;border-spacing: 0" class="table">
         <tr style="text-align:center">
-            <td style="text-align: center;" colspan="2">“ASAN” Finans sistemi vasitəsilə məlumatların alınmasına dair razılıq ərizəsi </td>
+            <img src="<%= resourcesPath %>/img.png" alt="">
+            <td style="text-align: center; color: red" colspan="2">“ASAN” Finans sistemi vasitəsilə məlumatların alınmasına dair razılıq ərizəsi </td>
         </tr>
         <tr>
             <td style="padding-top: 30px">Adı, soyadı, ata adı <u> <div class="info">
