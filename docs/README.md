@@ -24,3 +24,10 @@ Simple library to generate **PDF** files fast and flexible using Node.js.
   - Finally creates **PDF** based on that page using `page.pdf()` method of [Puppeteer](https://github.com/puppeteer/puppeteer)!
   - Remove temporarily generated **HTML** file
 - `createPdf` method resolves generated **PDF**
+
+***
+
+## How to start?
+
+- `docsify serve docs` - to start documentation
+- `start:server` - to start express server
