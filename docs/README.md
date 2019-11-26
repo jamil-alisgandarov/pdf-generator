@@ -11,6 +11,7 @@ Simple library to generate **PDF** files fast and flexible using Node.js.
 - [Puppeteer](https://github.com/puppeteer/puppeteer) - used to generate **PDF** files
 - [Express.js](https://expressjs.com/) - To accept and execute requests
 - [EJS](https://ejs.co/) - Embedded JavaScript templating, to fulfill **HTML** with passed data
+- [Docsify](https://docsify.js.org/#/) - Generated documentation with
 
 ## How it works?
 
