@@ -42,6 +42,8 @@ export class HTMLFile {
     }
 
     public deleteFile = async () => {
-        await deleteFile(this.joinFileNameAndDir(this.file));
+        if (!fs.existsSync(this.joinFileNameAndDir(this.file))) {
+            await deleteFile(this.joinFileNameAndDir(this.file));
+        }
     }
 }
