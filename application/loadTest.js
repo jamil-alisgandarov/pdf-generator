@@ -2,15 +2,15 @@ import { check } from "k6";
 import http from "k6/http";
 
 export let options = {
-    duration: "1m",
-    target: 60,
+    vus: 200,
+    duration: '3m',
 };
 
 export default function () {
     const payload = {
         "form": {
-            "customerName": "Jamil",
-            "finCode": "2K128UN",
+            "customerName": "Example",
+            "finCode": "2221231",
             "signDate": "24.05.1998"
         }
     };
