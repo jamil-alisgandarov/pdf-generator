@@ -5,6 +5,7 @@ import * as logger from 'fancy-log';
 import { HTMLFile } from './HTMLFile';
 import { generateHtml } from '../templates';
 import { PDF_CONFIG } from '../application/consts';
+import { TEMPLATES_DIR } from '../templates/consts';
 
 process.setMaxListeners(0);
 
@@ -44,9 +45,13 @@ class PDFGenerator {
         templatePath: string,
         resourcesPath: string,
         data: any
-    ) => {
-        return await generateHtml(templatePath, { ...data, resourcesPath });
-    }
+    ) => await generateHtml(
+        TEMPLATES_DIR + templatePath,
+        {
+            ...data,
+            resourcesPath: TEMPLATES_DIR + resourcesPath,
+        }
+    );
 
     private getUniqueFileName = (fileNamePrefix?: string): string => {
         let name = `${cuid()}.pdf`;

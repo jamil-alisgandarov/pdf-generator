@@ -9,7 +9,7 @@ export async function generateHtml<D> (
     data: D,
 ): Promise<string> {
     const html = await ejs.renderFile<string>(
-        __dirname + templatePath,
+        templatePath,
         data
     );
 

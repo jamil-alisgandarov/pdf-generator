@@ -1,1 +1,1 @@
-export const TEMPLATES_PATH = __dirname;
+export const TEMPLATES_DIR = __dirname;
