@@ -1,5 +1,6 @@
 import * as puppeteer from 'puppeteer';
 import * as cuid from 'cuid';
+import * as logger from 'fancy-log';
 
 import { HTMLFile } from './HTMLFile';
 import { generateHtml } from '../templates';
@@ -25,10 +26,16 @@ class PDFGenerator {
     }
 
     private setupBrowser = async () => {
-        this.browser = await puppeteer.launch({ headless: true });
+        try {
+            this.browser = await puppeteer.launch({ headless: true });
+            logger.info('Browser launched');
+        } catch (err) {
+            logger.error(`Couldn't launch the browser, trying again.`)
+            await this.setupBrowser();
+        }
 
         this.browser.on('disconnected', () => {
-            console.log('Browser disconnected trying to reconnect');
+            logger.warn('Browser disconnected, trying to reconnect');
             this.setupBrowser();
         })
     };
@@ -41,7 +48,7 @@ class PDFGenerator {
         return await generateHtml(templatePath, { ...data, resourcesPath });
     }
 
-    private getFileName = (fileNamePrefix?: string): string => {
+    private getUniqueFileName = (fileNamePrefix?: string): string => {
         let name = `${cuid()}.pdf`;
 
         if (fileNamePrefix) {
@@ -60,27 +67,41 @@ class PDFGenerator {
     }: IPDFGeneratorOptions) => {
         try {
             const page = await this.browser.newPage();
-            console.log('Opened new page');
+            logger.info('Opened new page');
 
             const html = await this.generateHtmlWithData(templatePath, resourcesPath, data);
             const fileInstance = new HTMLFile();
-            await fileInstance.generateHtmlAndSave(html);
+
+            try {
+                await fileInstance.generateHtmlAndSave(html);
+                logger.info('Generated HTML file');
+            } catch (err) {
+                logger.error(`Couldn't generate HTML file `, err);
+            }
 
             await page.goto(fileInstance.getFilePath(), { timeout: 0 });
 
-            const pdf = await page.pdf(pdfConfiguration);
+            let pdf: Buffer;
+            try {
+                pdf = await page.pdf(pdfConfiguration);
+                logger.info('Generated PDF file');
+            } catch (err) {
+                logger.error(`Couldn't generate PDF `, err);
+            }
 
             await fileInstance.deleteFile();
 
-            await page.close();
-            console.log('Closed page');
+            try {
+                await page.close();
+                logger.info('Closed page');
+            } catch (err) { }
 
             return {
                 pdf,
-                name: this.getFileName(fileNamePrefix),
+                name: this.getUniqueFileName(fileNamePrefix),
             };
         } catch (e) {
-            console.log(e);
+            logger.error(e);
         }
     }
 }
