@@ -1,11 +1,10 @@
 import * as puppeteer from 'puppeteer';
-import * as cuid from 'cuid';
 import * as logger from 'fancy-log';
 
 import { HTMLFile } from './HTMLFile';
-import { generateHtml } from '../templates';
 import { PDF_CONFIG } from '../application/consts';
-import { TEMPLATES_DIR } from '../templates/consts';
+import { joinFileNameAndExt } from './utils';
+import { EFileExtension } from './enums';
 
 process.setMaxListeners(0);
 
@@ -41,27 +40,6 @@ class PDFGenerator {
         })
     };
 
-    private generateHtmlWithData = async (
-        templatePath: string,
-        resourcesPath: string,
-        data: any
-    ) => await generateHtml(
-        TEMPLATES_DIR + templatePath,
-        {
-            ...data,
-            resourcesPath: TEMPLATES_DIR + resourcesPath,
-        }
-    );
-
-    private getUniqueFileName = (fileNamePrefix?: string): string => {
-        let name = `${cuid()}.pdf`;
-
-        if (fileNamePrefix) {
-            name = fileNamePrefix + '-' + name;
-        }
-
-        return name;
-    }
 
     public createPdf = async ({
         templatePath,
@@ -74,17 +52,16 @@ class PDFGenerator {
             const page = await this.browser.newPage();
             logger.info('Opened new page');
 
-            const html = await this.generateHtmlWithData(templatePath, resourcesPath, data);
-            const fileInstance = new HTMLFile();
+            const fileInstance = new HTMLFile(fileNamePrefix);
 
             try {
-                await fileInstance.generateHtmlAndSave(html);
+                await fileInstance.generateHtmlAndSave({ templatePath, resourcesPath, data });
                 logger.info('Generated HTML file');
             } catch (err) {
                 logger.error(`Couldn't generate HTML file `, err);
             }
 
-            await page.goto(fileInstance.getFilePath(), { timeout: 0 });
+            await page.goto(fileInstance.file.fullPathToView, { timeout: 0 });
 
             let pdf: Buffer;
             try {
@@ -103,7 +80,7 @@ class PDFGenerator {
 
             return {
                 pdf,
-                name: this.getUniqueFileName(fileNamePrefix),
+                name: joinFileNameAndExt(fileInstance.file.name, EFileExtension.PDF),
             };
         } catch (e) {
             logger.error(e);
